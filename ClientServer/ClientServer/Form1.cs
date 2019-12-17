@@ -8,43 +8,51 @@ using System.Collections.Generic;
 
 namespace ClientServer
 {
+
+
     public partial class ClientForm : Form
     {
-        //константы
-        private const string CRLF = "\r\n";
-        //private const string LOCALHOST = "127.0.0.1";
-        private const string LOCALHOST = "192.168.1.71"; //проверял на работе в домашней сети между компьютерами
-        private const int DEFAULT_PORT = 5959;
+        public const string CRLF = "\r\n";
+        public const string LOCALHOST = "127.0.0.1";
+        public const int DEFAULT_PORT = 5959;
 
-        FilesHandler fh = new FilesHandler();
+        private FilesHandler _filesHandler;
         private TcpClient _client;
 
         public ClientForm()
         {
             InitializeComponent();
+            _filesHandler = new FilesHandler();
         }
 
-        private void ConnectToServer() //подключение к серверу
+        /// <summary>
+        /// Подключение к серверу
+        /// </summary>
+        private void ConnectToServer() 
         {
             _client = new TcpClient(LOCALHOST, DEFAULT_PORT);
-            Thread t = new Thread(ProcessClientTransactions);
+            var t = new Thread(ProcessClientTransactions);
             t.IsBackground = true;
             t.Start(_client);
         }
 
-        private void SendCommandButtonHandler(string path) //отправка серверу
+        /// <summary>
+        /// Отправка сообщений серверу
+        /// </summary>
+        /// <param name="path"></param>
+        private void SendCommandButtonHandler(string path) 
         {
             List<(string, string)> alltext;
             var onlytext = new List<string>();
-            bool rez = fh.CheckFiles(path); //проверка на кол-во файлов в папке
+            var rez = _filesHandler.CheckFiles(path); //проверка на кол-во файлов в папке
             if (rez == true)
             {
                 ConnectToServer();
-                StreamWriter writer = new StreamWriter(_client.GetStream());
-                alltext = fh.ReadFiles(path); //считываем файлы в формат [название, текст]
-                onlytext = fh.ListToOnlyText(alltext); //сохраняем только текст для отправки
+                var writer = new StreamWriter(_client.GetStream());
+                alltext = _filesHandler.ReadFiles(path); //считываем файлы в формат [название, текст]
+                onlytext = _filesHandler.ListToOnlyText(alltext); //сохраняем только текст для отправки
 
-                foreach (string value in onlytext)
+                foreach (var value in onlytext)
                 {
                     writer.WriteLine(value);
                     writer.Flush();
@@ -53,32 +61,37 @@ namespace ClientServer
             else MessageBox.Show("В папке больше 127 файлов! Для задания необходимо меньше 127!");
         }
 
-        private void ProcessClientTransactions(object tcpClient)  //поток для принятия ответа
+        /// <summary>
+        /// Обработка сообщений TCP клиента
+        /// </summary>
+        /// <param name="tcpClient"></param>
+        private void ProcessClientTransactions(object tcpClient) 
         {
-            TcpClient client = (TcpClient)tcpClient;
-            string input = string.Empty;
-            StreamReader reader = null;
-            StreamWriter writer = null;
-
+            var client = (TcpClient)tcpClient;
             try
             {
-                reader = new StreamReader(client.GetStream());
-                writer = new StreamWriter(client.GetStream());
-
+                var reader = new StreamReader(client.GetStream());
                 while (client.Connected)
                 {
-                    input = reader.ReadLine();
-
-
-                    ServerAnswerBox.InvokeEx(stb => stb.Text += CRLF + " Получено от сервера: " + input);
-
+                    var input = reader.ReadLine();
+                    WriteLine(" Получено от сервера: " + input);
                 }
             }
             catch (Exception ex)
             {
-                ServerAnswerBox.InvokeEx(stb => stb.Text += CRLF + "Проблема с подключением к серверу!");
+                WriteLine("Проблема с подключением к серверу!");
+                WriteLine(ex.ToString());
             }
 
+        }
+
+        /// <summary>
+        /// Вывод сообщений на форму
+        /// </summary>
+        /// <param name="text"></param>
+        private void WriteLine(string text)
+        {
+            ServerAnswerBox.InvokeEx(stb => stb.Text += CRLF + text);
         }
 
         private void ClientSendButton_Click(object sender, EventArgs e)
@@ -87,9 +100,14 @@ namespace ClientServer
             ClientCommandBox.Text = string.Empty;
         }
 
-        private void button1_Click(object sender, EventArgs e) //создавал файлы для проверки кол-ва > 127
+        /// <summary>
+        /// Создание файлов для проверки кол-ва (>127)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e) 
         {
-            fh.CreateFiles(Int32.Parse(textBox1.Text));
+            _filesHandler.CreateFiles(Int32.Parse(textBox1.Text));
         }
 
         private void ClientCommandBox_TextChanged(object sender, EventArgs e)
@@ -99,7 +117,7 @@ namespace ClientServer
 
         private void ClientForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            fh.SaveLog(ServerAnswerBox.Text);
+            _filesHandler.SaveLog(ServerAnswerBox.Text);
         }
     }
 }

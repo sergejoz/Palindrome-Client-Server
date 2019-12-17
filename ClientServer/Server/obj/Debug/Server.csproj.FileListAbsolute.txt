@@ -25,3 +25,12 @@ D:\STUDY\Shared\Projects\ClientServer\Server\obj\Debug\Server.csproj.GenerateRes
 D:\STUDY\Shared\Projects\ClientServer\Server\obj\Debug\Server.exe
 D:\STUDY\Shared\Projects\ClientServer\Server\obj\Debug\Server.pdb
 D:\STUDY\Shared\Projects\ClientServer\Server\obj\Debug\Server.csprojAssemblyReference.cache
+E:\Projects\GitHub\Palindrome-Client-Server\ClientServer\Server\bin\Debug\Server.exe.config
+E:\Projects\GitHub\Palindrome-Client-Server\ClientServer\Server\bin\Debug\Server.exe
+E:\Projects\GitHub\Palindrome-Client-Server\ClientServer\Server\bin\Debug\Server.pdb
+E:\Projects\GitHub\Palindrome-Client-Server\ClientServer\Server\obj\Debug\Server.csprojAssemblyReference.cache
+E:\Projects\GitHub\Palindrome-Client-Server\ClientServer\Server\obj\Debug\Server.ServerForm.resources
+E:\Projects\GitHub\Palindrome-Client-Server\ClientServer\Server\obj\Debug\Server.Properties.Resources.resources
+E:\Projects\GitHub\Palindrome-Client-Server\ClientServer\Server\obj\Debug\Server.csproj.GenerateResource.cache
+E:\Projects\GitHub\Palindrome-Client-Server\ClientServer\Server\obj\Debug\Server.exe
+E:\Projects\GitHub\Palindrome-Client-Server\ClientServer\Server\obj\Debug\Server.pdb

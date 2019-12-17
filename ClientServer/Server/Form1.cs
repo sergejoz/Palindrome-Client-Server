@@ -27,7 +27,10 @@ namespace Server
             textBox1.Text = _threads_count.ToString();
         }
 
-        private void StartServer() //включение сервера
+        /// <summary>
+        /// Включение сервера
+        /// </summary>
+        private void StartServer() 
         {
             _threads_count = 0;
             Thread t = new Thread(ListenForIncomingConnections);
@@ -36,15 +39,17 @@ namespace Server
             t.Start();
         }
 
-        private void ListenForIncomingConnections() //прослушивание клиентов
+        /// <summary>
+        ///  Прослушивание подключений клиентов
+        /// </summary>
+        private void ListenForIncomingConnections() 
         {
             try
             {
                 _keep_going = true;
                 _listener = new TcpListener(IPAddress.Any, DEFAULT_PORT);
                 _listener.Start();
-                ServerStatusBox.InvokeEx(stb => stb.Text += CRLF + "Сервер включен. Слушаю порт: " + DEFAULT_PORT);
-
+                WriteLine("Сервер включен. Слушаю порт: " + DEFAULT_PORT);
                 while (_keep_going)
                 {
                     DoTask();
@@ -52,37 +57,42 @@ namespace Server
             }
             catch (Exception ex)
             {
-                ServerStatusBox.InvokeEx(stb => stb.Text += CRLF + "Проблемы с запуском сервера.");
-                ServerStatusBox.InvokeEx(stb => stb.Text += CRLF + ex.ToString());
+                WriteLine("Проблемы с запуском сервера.");
+                WriteLine(ex.ToString());
             }
         }
 
-        private void DoTask() //действие 
+        /// <summary>
+        /// Одобрение клиента и старт потока
+        /// </summary>
+        private void DoTask() 
         {
-            int needed = Int32.Parse(textBox2.Text);
-            TcpClient client = _listener.AcceptTcpClient(); // одобряем клиента
+            var needed = Int32.Parse(textBox2.Text);
+            var client = _listener.AcceptTcpClient(); 
 
             if (_threads_count < needed)
             {
-                ServerStatusBox.InvokeEx(stb => stb.Text += CRLF + "Новый запрос! Начинаю выполнение...");
-                Thread t = new Thread(ProcessClientRequests);
+                WriteLine("Новый запрос! Начинаю выполнение...");
+                var t = new Thread(ProcessClientRequests);
                 t.IsBackground = true;
                 t.Start(client);
-
-                
             }
             else
             {
-                ServerStatusBox.InvokeEx(stb => stb.Text += CRLF + "Новый запрос, но нет свободного потока!");
-                StreamWriter writer = new StreamWriter(client.GetStream());
+                WriteLine("Новый запрос, но нет свободного потока!");
+                var writer = new StreamWriter(client.GetStream());
                 writer.WriteLine("Нет свободного потока!");
                 writer.Flush();
             }
         }
 
-        private void ProcessClientRequests(object o) //потоковое задание
+        /// <summary>
+        /// Потоковое задание
+        /// </summary>
+        /// <param name="o"></param>
+        private void ProcessClientRequests(object o)
         {
-            TcpClient client = (TcpClient)o;
+            var client = (TcpClient)o;
             _threads_count++;
             textBox1.InvokeEx(cctb => cctb.Text = _threads_count.ToString());
 
@@ -90,34 +100,56 @@ namespace Server
             //    то он никак не может затратить на нее меньше 1 секунды 
             //    (допустимо использование методов Thread.Sleep или Task.Delay)
             Thread.Sleep(3000);
-
-            string input = string.Empty;
-
             try
             {
-                StreamReader reader = new StreamReader(client.GetStream());
-                StreamWriter writer = new StreamWriter(client.GetStream());
+                var reader = new StreamReader(client.GetStream());
+                var writer = new StreamWriter(client.GetStream());
                 while (client.Connected)
                 {
-                    input = reader.ReadLine();
-                    ServerStatusBox.InvokeEx(stb => stb.Text += CRLF + "От клиента: " + input);
+                    var input = reader.ReadLine();
+                    WriteLine("От клиента: " + input);
                     writer.WriteLine(input + ", " + Palindrom((input)));
                     writer.Flush();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ServerStatusBox.InvokeEx(stb => stb.Text += CRLF + "Проблема с подключением. ");
+                WriteLine("Проблема с подключением.");
+                _threads_count--;
+                textBox1.InvokeEx(cctb => cctb.Text = _threads_count.ToString());
             }
         }
 
-        public static string Palindrom(string s) //определение палиндрома
-        {
-            for (int i = 0; i < s.Length / 2; i++)
+        
 
-                if (s[i] != s[s.Length - i - 1])
-                    return "false";
-            return "true";
+        /// <summary>
+        /// Вывод сообщений на форму
+        /// </summary>
+        /// <param name="text"></param>
+        private void WriteLine(string text)
+        {
+            ServerStatusBox.InvokeEx(stb => stb.Text += CRLF + text);
+        }
+
+        /// <summary>
+        /// Определение палиндрома
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static string Palindrom(string s) 
+        {
+                int i = 0, j = s.Length - 1;
+                while (i < j)
+                {
+                    if (char.IsWhiteSpace(s[i]) || char.IsPunctuation(s[i]))
+                        i++;
+                    else if (char.IsWhiteSpace(s[j]) || char.IsPunctuation(s[j]))
+                        j--;
+                    else if (char.ToLowerInvariant(s[i++]) != char.ToLowerInvariant(s[j--]))
+                        return "false";
+                }
+                return "true";
+            
         }
 
         private void ServerForm_Load(object sender, EventArgs e)
@@ -130,10 +162,15 @@ namespace Server
 
         }
 
-        private void textBox2_TextChanged(object sender, EventArgs e) //проверка кол-ва потоков на форме
+        /// <summary>
+        /// Проверка количества потоков на форме 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void textBox2_TextChanged(object sender, EventArgs e) 
         {
             bool check;
-            int maxthread = Int32.Parse(textBox2.Text);
+            var maxthread = Int32.Parse(textBox2.Text);
             if ((maxthread > 0) && (maxthread <= 10))
                 check = true;
             else check = false;

@@ -11,7 +11,7 @@ namespace ClientServer
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool CheckFiles(string path) 
+        public bool CheckFiles(string path)
         {
             var filesCount = Directory.GetFiles(path).Length;
             return filesCount <= 127;
@@ -22,9 +22,9 @@ namespace ClientServer
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public List<(string, string)> ReadFiles(string path) 
+        public List<string> ReadFiles(string path)
         {
-            var fileStorage = new List<(string, string)>();
+            var fileStorage = new List<string>();
             var filePaths = Directory.GetFiles(path, "*.txt"); //string[]
             foreach (var pathz in filePaths)
             {
@@ -33,25 +33,10 @@ namespace ClientServer
                     var array = new byte[fstream.Length];
                     fstream.Read(array, 0, array.Length);
                     var textFromFile = Encoding.Default.GetString(array);
-                    fileStorage.Add((Path.GetFileName(pathz), textFromFile));
+                    fileStorage.Add(textFromFile);
                 }
             }
             return fileStorage;
-        }
-
-        /// <summary>
-        /// Преобразуем лист в только текст файла для отправки
-        /// </summary>
-        /// <param name="textlist"></param>
-        /// <returns></returns>
-        public List<string> ListToOnlyText(List<(string, string)> textlist) 
-        {
-            var onlytext = new List<string>();
-            for (var i = 0; i < textlist.Count; i++)
-            {
-                onlytext.Add(textlist[i].Item2);
-            }
-            return onlytext;
         }
 
         /// <summary>
@@ -77,7 +62,7 @@ namespace ClientServer
         /// Сохранение лога о работе приложения при закрытии 
         /// </summary>
         /// <param name="logtext"></param>
-        public void SaveLog(string logtext) 
+        public void SaveLog(string logtext)
         {
             var path = $"log.txt";
             using (FileStream fs = File.Create(path))

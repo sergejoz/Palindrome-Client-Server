@@ -8,12 +8,12 @@ using System.Collections.Generic;
 
 namespace ClientServer
 {
-
-
     public partial class ClientForm : Form
     {
+        //константы
         public const string CRLF = "\r\n";
         public const string LOCALHOST = "127.0.0.1";
+        //private const string LOCALHOST = "192.168.1.71"; //проверял на работе в домашней сети между компьютерами
         public const int DEFAULT_PORT = 5959;
 
         private FilesHandler _filesHandler;
@@ -42,16 +42,13 @@ namespace ClientServer
         /// <param name="path"></param>
         private void SendCommandButtonHandler(string path) 
         {
-            List<(string, string)> alltext;
             var onlytext = new List<string>();
             var rez = _filesHandler.CheckFiles(path); //проверка на кол-во файлов в папке
             if (rez == true)
             {
                 ConnectToServer();
                 var writer = new StreamWriter(_client.GetStream());
-                alltext = _filesHandler.ReadFiles(path); //считываем файлы в формат [название, текст]
-                onlytext = _filesHandler.ListToOnlyText(alltext); //сохраняем только текст для отправки
-
+                onlytext = _filesHandler.ReadFiles(path); 
                 foreach (var value in onlytext)
                 {
                     writer.WriteLine(value);

@@ -10,15 +10,11 @@ namespace Server
 {
     public partial class ServerForm : Form
     {
-        // перенос
-        private const string CRLF = "\r\n";
-
         // вынес переменные
         private TcpListener _listener;
-        private int _threads_count=0;
+        private int _threads_count = 0;
         private bool _keep_going;
         private const int DEFAULT_PORT = 5959;
-
 
         public ServerForm()
         {
@@ -30,7 +26,7 @@ namespace Server
         /// <summary>
         /// Включение сервера
         /// </summary>
-        private void StartServer() 
+        private void StartServer()
         {
             _threads_count = 0;
             Thread t = new Thread(ListenForIncomingConnections);
@@ -42,7 +38,7 @@ namespace Server
         /// <summary>
         ///  Прослушивание подключений клиентов
         /// </summary>
-        private void ListenForIncomingConnections() 
+        private void ListenForIncomingConnections()
         {
             try
             {
@@ -65,10 +61,10 @@ namespace Server
         /// <summary>
         /// Одобрение клиента и старт потока
         /// </summary>
-        private void DoTask() 
+        private void DoTask()
         {
             var needed = Int32.Parse(textBox2.Text);
-            var client = _listener.AcceptTcpClient(); 
+            var client = _listener.AcceptTcpClient();
 
             if (_threads_count < needed)
             {
@@ -120,7 +116,7 @@ namespace Server
             }
         }
 
-        
+
 
         /// <summary>
         /// Вывод сообщений на форму
@@ -128,7 +124,7 @@ namespace Server
         /// <param name="text"></param>
         private void WriteLine(string text)
         {
-            ServerStatusBox.InvokeEx(stb => stb.Text += CRLF + text);
+            ServerStatusBox.InvokeEx(stb => stb.Text += "\r\n" + text);
         }
 
         /// <summary>
@@ -136,20 +132,20 @@ namespace Server
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string Palindrom(string s) 
+        public static string Palindrom(string s)
         {
-                int i = 0, j = s.Length - 1;
-                while (i < j)
-                {
-                    if (char.IsWhiteSpace(s[i]) || char.IsPunctuation(s[i]))
-                        i++;
-                    else if (char.IsWhiteSpace(s[j]) || char.IsPunctuation(s[j]))
-                        j--;
-                    else if (char.ToLowerInvariant(s[i++]) != char.ToLowerInvariant(s[j--]))
-                        return "false";
-                }
-                return "true";
-            
+            int i = 0, j = s.Length - 1;
+            while (i < j)
+            {
+                if (char.IsWhiteSpace(s[i]) || char.IsPunctuation(s[i]))
+                    i++;
+                else if (char.IsWhiteSpace(s[j]) || char.IsPunctuation(s[j]))
+                    j--;
+                else if (char.ToLowerInvariant(s[i++]) != char.ToLowerInvariant(s[j--]))
+                    return "false";
+            }
+            return "true";
+
         }
 
         private void ServerForm_Load(object sender, EventArgs e)
@@ -167,7 +163,7 @@ namespace Server
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void textBox2_TextChanged(object sender, EventArgs e) 
+        private void textBox2_TextChanged(object sender, EventArgs e)
         {
             bool check;
             var maxthread = Int32.Parse(textBox2.Text);

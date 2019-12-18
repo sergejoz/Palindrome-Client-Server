@@ -11,7 +11,7 @@ namespace ClientServer
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool CheckFiles(string path)
+        public bool CheckFilesCount(string path)
         {
             var filesCount = Directory.GetFiles(path).Length;
             return filesCount <= 127;
@@ -37,25 +37,6 @@ namespace ClientServer
                 }
             }
             return fileStorage;
-        }
-
-        /// <summary>
-        /// Создание определенного количества файлов (для проверки ограничения кол-ва)
-        /// </summary>
-        /// <param name="a"></param>
-        public void CreateFiles(int a)
-        {
-            var pathname = "";
-            var path = @"D:\STUDY\Shared\Projects\ClientServer\Data\Data1\";
-            for (var i = 0; i <= a; i++)
-            {
-                pathname = path + (i + 1) + ".txt";
-                using (FileStream fs = File.Create(pathname))
-                {
-                    var info = new UTF8Encoding(true).GetBytes("MACROSCOP");
-                    fs.Write(info, 0, info.Length);
-                }
-            }
         }
 
         /// <summary>

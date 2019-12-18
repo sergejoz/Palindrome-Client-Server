@@ -45,6 +45,7 @@
             // 
             // ClientCommandBox
             // 
+            this.ClientCommandBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ClientCommandBox.Location = new System.Drawing.Point(6, 55);
             this.ClientCommandBox.Multiline = true;
             this.ClientCommandBox.Name = "ClientCommandBox";
@@ -54,6 +55,7 @@
             // 
             // ServerAnswerBox
             // 
+            this.ServerAnswerBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ServerAnswerBox.Location = new System.Drawing.Point(6, 199);
             this.ServerAnswerBox.Multiline = true;
             this.ServerAnswerBox.Name = "ServerAnswerBox";
@@ -174,6 +176,7 @@
             this.Name = "ClientForm";
             this.Text = "ClientForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientForm_FormClosing);
+            this.Load += new System.EventHandler(this.ClientForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

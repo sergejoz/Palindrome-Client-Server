@@ -17,7 +17,6 @@ namespace ClientServer
         {
             InitializeComponent();
             _filesHandler = new FilesHandler();
-            
         }
 
         /// <summary>
@@ -113,6 +112,10 @@ namespace ClientServer
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void ClientForm_Load(object sender, EventArgs e)
+        {
         }
     }
 }

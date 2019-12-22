@@ -13,7 +13,7 @@ namespace ClientServer
         private FilesHandler _filesHandler;
         private TcpClient _client;
 
-        public ClientForm()
+            public ClientForm()
         {
             InitializeComponent();
             _filesHandler = new FilesHandler();
@@ -49,6 +49,7 @@ namespace ClientServer
             }
 
             ConnectToServer();
+
 
             var writer = new StreamWriter(_client.GetStream());
             onlytext = _filesHandler.ReadFiles(path);

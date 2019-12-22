@@ -85,10 +85,10 @@ namespace Server
         /// <summary>
         /// Потоковое задание
         /// </summary>
-        /// <param name="o"></param>
-        private void ProcessClientRequests(object o)
+        /// <param name="tcpClient"></param>
+        private void ProcessClientRequests(object tcpClient)
         {
-            var client = (TcpClient)o;
+            var client = (TcpClient)tcpClient;
             _threads_count++;
             textBox1.InvokeEx(cctb => cctb.Text = _threads_count.ToString());
 
@@ -115,8 +115,6 @@ namespace Server
                 textBox1.InvokeEx(cctb => cctb.Text = _threads_count.ToString());
             }
         }
-
-
 
         /// <summary>
         /// Вывод сообщений на форму

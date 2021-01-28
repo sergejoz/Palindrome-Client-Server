@@ -83,10 +83,65 @@ namespace Server
         }
 
         /// <summary>
+        /// Одобрение клиента и старт потока
+        /// </summary>
+        private void DoTaskNew()
+        {
+            var needed = Int32.Parse(textBox2.Text);
+            var client = _listener.AcceptTcpClient();
+
+            if (_threads_count < needed)
+            {
+                WriteLine("Новый запрос! Начинаю выполнение...");
+                
+                var t = new Thread(ProcessClientRequests);
+                t.IsBackground = true;
+                t.Start(client);
+            }
+            else
+            {
+                WriteLine("Новый запрос, но нет свободного потока!");
+                var writer = new StreamWriter(client.GetStream());
+                writer.WriteLine("Нет свободного потока!");
+                writer.Flush();
+            }
+        }
+
+        /// <summary>
         /// Потоковое задание
         /// </summary>
         /// <param name="tcpClient"></param>
         private void ProcessClientRequests(object tcpClient)
+        {
+            var client = (TcpClient)tcpClient;
+            _threads_count++;
+            textBox1.InvokeEx(cctb => cctb.Text = _threads_count.ToString());
+
+            //Так как вычисление палиндрома задача для Сервера творческая, 
+            //    то он никак не может затратить на нее меньше 1 секунды 
+            //    (допустимо использование методов Thread.Sleep или Task.Delay)
+            Thread.Sleep(3000);
+            try
+            {
+                var reader = new StreamReader(client.GetStream());
+                var writer = new StreamWriter(client.GetStream());
+                while (client.Connected)
+                {
+                    var input = reader.ReadLine();
+                    WriteLine("От клиента: " + input);
+                    writer.WriteLine(input + ", " + Palindrom((input)));
+                    writer.Flush();
+                }
+            }
+            catch (Exception)
+            {
+                WriteLine("Проблема с подключением.");
+                _threads_count--;
+                textBox1.InvokeEx(cctb => cctb.Text = _threads_count.ToString());
+            }
+        }
+
+        private void ProcessClientRequestsNew(object tcpClient)
         {
             var client = (TcpClient)tcpClient;
             _threads_count++;
@@ -172,6 +227,18 @@ namespace Server
             {
                 MessageBox.Show("Значение должно быть от 1 до 10");
                 textBox2.Clear();
+            }
+        }
+
+        public class UsingData
+        {
+            public TcpClient x { get; set; }
+            public string y { get; set; }
+
+            public UsingData(TcpClient _x, string _y)
+            {
+                this.x = _x;
+                this.y = _y;
             }
         }
     }
